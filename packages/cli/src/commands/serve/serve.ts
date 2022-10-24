@@ -173,6 +173,8 @@ export async function serveMesh(
           const { schema, execute, subscribe, contextFactory, parse, validate } = getEnveloped({
             // req object holds the Node request used for extracting the headers (see packages/runtime/src/get-mesh.ts)
             req: request,
+            // webSocketConnectionParams object holds the WebSocket connectionParams for usage in configs (see packages/runtime/src/get-mesh.ts)
+            webSocketConnectionParams: connectionParams,
           });
 
           const args = {

@@ -161,21 +161,33 @@ export async function getMesh(options: GetMeshOptions): Promise<MeshInstance> {
   let failed = false;
   const initialPluginList: MeshPlugin<any>[] = [
     // TODO: Not a good practise to expect users to be a Yoga user
-    useExtendContext(({ request, req }: { request: Request; req?: { headers?: Record<string, string> } }) => {
-      // Maybe Node-like environment
-      if (req?.headers) {
-        return {
-          headers: req.headers,
-        };
+    useExtendContext(
+      ({
+        request,
+        req,
+        webSocketConnectionParams,
+      }: {
+        request: Request;
+        req?: { headers?: Record<string, string> };
+        webSocketConnectionParams?: Record<string, unknown>;
+      }) => {
+        // Maybe Node-like environment
+        if (req?.headers) {
+          return {
+            headers: req.headers,
+            webSocketConnectionParams, // WebSocket connectionParams set in context (see packages/cli/src/commands/serve/serve.ts)
+          };
+        }
+        // Fetch environment
+        if (request?.headers) {
+          return {
+            headers: getHeadersObj(request.headers),
+            webSocketConnectionParams, // WebSocket connectionParams set in context (see packages/cli/src/commands/serve/serve.ts)
+          };
+        }
+        return {};
       }
-      // Fetch environment
-      if (request?.headers) {
-        return {
-          headers: getHeadersObj(request.headers),
-        };
-      }
-      return {};
-    }),
+    ),
     useExtendContext(() => ({
       pubsub,
       cache,
