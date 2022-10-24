@@ -46,6 +46,13 @@ sources:
           Authorization: Bearer {context.headers['x-my-api-token']}
           # You can also access to the cookies like below;
           # Authorization: Bearer {context.cookies.myApiToken}
+        webSocketConnectionParams:
+          # Use the token from the HTTP header and pass it down to the WebSocket connection params
+          token: Bearer {context.headers['x-my-api-token']}
+          # You can also alter the existing incoming WebSocket connection params
+          # token: Bearer {context.webSocketConnectionParams.token}
+          # Or use a static value from environment variables
+          # token: Bearer {env.MY_API_TOKEN}
 ```
 
 And for `mesh dev` or `mesh start`, you can pass the value using `x-my-graphql-api-token` HTTP header.

@@ -87,7 +87,7 @@ export default class GraphQLHandler implements MeshHandler {
   async getExecutorForHTTPSourceConfig(
     httpSourceConfig: YamlConfig.GraphQLHandlerHTTPConfiguration
   ): Promise<MeshSource['executor']> {
-    const { endpoint, operationHeaders = {} } = httpSourceConfig;
+    const { endpoint, operationHeaders = {}, webSocketConnectionParams = {} } = httpSourceConfig;
 
     this.interpolationStringSet.add(endpoint);
     Object.keys(operationHeaders).forEach(headerName => {
@@ -96,6 +96,7 @@ export default class GraphQLHandler implements MeshHandler {
 
     const endpointFactory = getInterpolatedStringFactory(endpoint);
     const operationHeadersFactory = getInterpolatedHeadersFactory(operationHeaders);
+    const webSocketConnectionParamsFactory = getInterpolatedHeadersFactory(webSocketConnectionParams);
     const executor = this.urlLoader.getExecutorAsync(endpoint, {
       ...httpSourceConfig,
       subscriptionsProtocol: httpSourceConfig.subscriptionsProtocol as SubscriptionProtocol,
@@ -109,6 +110,7 @@ export default class GraphQLHandler implements MeshHandler {
         extensions: {
           ...params.extensions,
           headers: operationHeadersFactory(resolverData),
+          webSocketConnectionParams: webSocketConnectionParamsFactory(resolverData),
           endpoint: endpointFactory(resolverData),
         },
       });
