@@ -7,6 +7,7 @@ import { Router } from 'itty-router';
 import { withCookies } from 'itty-router-extras';
 import { graphqlHandler } from './graphqlHandler';
 import { Response } from '@whatwg-node/fetch';
+import landingPageHtml from './landing-page-html';
 
 export type MeshHTTPHandler<TServerContext> = ServerAdapter<TServerContext, Router<Request>>;
 
@@ -82,8 +83,8 @@ export function createMeshHTTPHandler<TServerContext>({
     serverAdapter.get('*', async request => {
       const url = new URL(request.url);
       if (graphqlPath !== '/' && url.pathname === '/' && (await pathExists(indexPath))) {
-        const indexFile = await fs.promises.readFile(indexPath);
-        return new Response(indexFile, {
+        const indexFileStream = fs.createReadStream(indexPath);
+        return new Response(indexFileStream as any, {
           status: 200,
           headers: {
             'Content-Type': 'text/html',
@@ -92,24 +93,13 @@ export function createMeshHTTPHandler<TServerContext>({
       }
       const filePath = path.join(baseDir, staticFiles, url.pathname);
       if (await pathExists(filePath)) {
-        const body = await fs.promises.readFile(filePath);
-        return new Response(body, {
+        const fileStream = fs.createReadStream(filePath);
+        return new Response(fileStream as any, {
           status: 200,
         });
       }
       return undefined;
     });
-  } else if (graphqlPath !== '/') {
-    serverAdapter.get(
-      '/',
-      () =>
-        new Response(null, {
-          status: 302,
-          headers: {
-            Location: graphqlPath,
-          },
-        })
-    );
   }
 
   serverAdapter.all(
@@ -117,6 +107,22 @@ export function createMeshHTTPHandler<TServerContext>({
     withCookies,
     graphqlHandler(mesh$, playgroundTitle, playgroundEnabled, graphqlPath, corsConfig)
   );
+
+  serverAdapter.all('*', (request: Request) => {
+    const acceptType = request.headers.get('accept');
+    if (acceptType.includes('text/html')) {
+      return new Response(landingPageHtml.replace('__GRAPHIQL_LINK__', graphqlPath), {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html',
+        },
+      });
+    }
+    return new Response(null, {
+      status: 404,
+      statusText: 'Not Found',
+    });
+  });
 
   return serverAdapter;
 }

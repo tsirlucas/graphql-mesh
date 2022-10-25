@@ -3,6 +3,7 @@ import { inspect } from '@graphql-tools/utils';
 
 export const fs = {
   promises: {},
+  createReadStream: () => {},
 };
 
 export { path };
