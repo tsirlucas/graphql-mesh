@@ -1,5 +1,6 @@
-const { ApolloServer, gql } = require('apollo-server');
-const { buildSubgraphSchema } = require('@apollo/subgraph');
+import { buildSubgraphSchema } from '@apollo/subgraph';
+import type { GraphQLResolverMap } from '@apollo/subgraph/dist/schema-helper';
+import { ApolloServer, gql } from 'apollo-server';
 
 const typeDefs = gql`
   extend type Product @key(fields: "upc") {
@@ -11,7 +12,7 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers = {
+const resolvers: GraphQLResolverMap<any> = {
   Product: {
     __resolveReference(object) {
       return {
@@ -37,12 +38,19 @@ const server = new ApolloServer({
   ]),
 });
 
-module.exports = server.listen({ port: 9872 }).then(({ url }) => {
-  if (!process.env.CI) {
-    console.log(`🚀 Server ready at ${url}`);
-  }
-  return server;
-});
+export default {
+  async start() {
+    return server.listen({ port: 9872 }).then(({ url }) => {
+      if (!process.env.CI) {
+        console.log(`🚀 Server ready at ${url}`);
+      }
+      return;
+    });
+  },
+  async stop() {
+    return server.stop();
+  },
+};
 
 const inventory = [
   { upc: '1', inStock: true },

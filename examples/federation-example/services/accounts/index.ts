@@ -1,4 +1,5 @@
-const { ApolloServer, gql } = require('apollo-server');
+import type { IExecutableSchemaDefinition } from '@graphql-tools/schema';
+import { ApolloServer, gql } from 'apollo-server';
 
 const typeDefs = gql`
   type Query {
@@ -14,7 +15,7 @@ const typeDefs = gql`
   }
 `;
 
-const resolvers = {
+const resolvers: IExecutableSchemaDefinition['resolvers'] = {
   Query: {
     me(root, args, context) {
       return context.users[0];
@@ -49,9 +50,16 @@ const server = new ApolloServer({
   },
 });
 
-module.exports = server.listen({ port: 9871 }).then(({ url }) => {
-  if (!process.env.CI) {
-    console.log(`🚀 Server ready at ${url}`);
-  }
-  return server;
-});
+export default {
+  async start() {
+    return server.listen({ port: 9871 }).then(({ url }) => {
+      if (!process.env.CI) {
+        console.log(`🚀 Server ready at ${url}`);
+      }
+      return;
+    });
+  },
+  async stop() {
+    return server.stop();
+  },
+};
