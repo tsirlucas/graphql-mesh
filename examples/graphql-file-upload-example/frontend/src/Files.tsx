@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from '@apollo/client';
+
 import { GET_FILES, DELETE_FILE } from './queries';
+import { GetFilesResult } from './types';
 
 export default function Files() {
-  const { loading, error, data } = useQuery(GET_FILES);
+  const { loading, error, data } = useQuery<GetFilesResult>(GET_FILES);
   const [deleteFile] = useMutation(DELETE_FILE);
 
   if (loading) return 'Loading...';
@@ -23,14 +25,14 @@ export default function Files() {
                     filename,
                   },
                   update(cache) {
-                    const data = cache.readQuery({
+                    const data = cache.readQuery<GetFilesResult>({
                       query: GET_FILES,
                     });
                     cache.writeQuery({
                       query: GET_FILES,
                       data: {
                         ...data,
-                        files: data.files.filter(image => image.filename !== filename),
+                        files: data?.files?.filter(image => image.filename !== filename),
                       },
                     });
                   },

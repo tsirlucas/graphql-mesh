@@ -1,11 +1,12 @@
+import { ApolloProvider } from '@apollo/client';
+
 import logo from './logo.svg';
 import './App.css';
 import Files from './Files';
 import UploadFile from './UploadFile';
-import { ApolloProvider } from '@apollo/client';
 import apolloClient from './apolloClient';
 
-function App() {
+export default function App() {
   return (
     <ApolloProvider client={apolloClient}>
       <div className="App">
@@ -18,5 +19,3 @@ function App() {
     </ApolloProvider>
   );
 }
-
-export default App;

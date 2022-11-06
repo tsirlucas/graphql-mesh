@@ -4,15 +4,16 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start-apis": "concurrently \"node upload-files/index.js\" \"node resize-image/index.js\"",
+    "start-apis": "concurrently \"ts-node upload-files/index.ts\" \"ts-node resize-image/index.ts\"",
     "start-gateway": "mesh dev"
   },
   "dependencies": {
     "@graphql-mesh/cli": "0.79.3",
     "@graphql-mesh/graphql": "0.31.31",
     "concurrently": "7.5.0",
+    "graphql": "16.6.0",
     "graphql-yoga": "3.0.0-next.10",
     "sharp": "0.31.2",
-    "graphql": "16.6.0"
+    "typescript": "4.8.4"
   }
 }

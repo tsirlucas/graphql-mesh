@@ -1,17 +1,17 @@
-const { createYoga, createSchema } = require('graphql-yoga');
-const { createServer } = require('http');
-const { existsSync, mkdirSync } = require('fs');
-const {
-  promises: { readdir, readFile, writeFile, unlink },
-} = require('fs');
-const { join } = require('path');
+import { createYoga, createSchema } from 'graphql-yoga';
+import { createServer } from 'http';
+import { existsSync, mkdirSync } from 'fs';
+import { promises } from 'fs';
+import { join } from 'path';
+
+const { readdir, readFile, writeFile, unlink } = promises;
 
 const FILES_DIR = join(__dirname, 'files');
 if (!existsSync(FILES_DIR)) {
   mkdirSync(FILES_DIR);
 }
 
-module.exports = function startServer() {
+export default function startServer() {
   const yoga = createYoga({
     schema: createSchema({
       typeDefs: /* GraphQL */ `
@@ -69,4 +69,4 @@ module.exports = function startServer() {
       );
     });
   });
-};
+}
