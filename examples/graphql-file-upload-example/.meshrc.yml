@@ -11,7 +11,7 @@ sources:
 additionalTypeDefs: |
   extend type FileResult {
     thumbnailImage(width: Int, height: Int): String @resolveTo(
-      requiredSelectionSet: "{ thumbnailImage }",
+      requiredSelectionSet: "{ base64 }",
       sourceName: "ResizeImages",
       sourceTypeName: "Query",
       sourceFieldName: "resizeImage",

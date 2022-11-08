@@ -7,8 +7,8 @@ export default function Files() {
   const { loading, error, data } = useQuery<GetFilesResult>(GET_FILES);
   const [deleteFile] = useMutation(DELETE_FILE);
 
-  if (loading) return 'Loading...';
-  if (error) return `Error! ${error.message}`;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error! {error.message}</p>;
 
   return (
     <ul>

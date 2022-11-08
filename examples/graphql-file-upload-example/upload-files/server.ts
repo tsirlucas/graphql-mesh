@@ -12,6 +12,11 @@ if (!existsSync(FILES_DIR)) {
 }
 
 export default function startServer() {
+  async function getBase64(filename: string) {
+    const base64 = await readFile(join(FILES_DIR, filename), 'base64');
+    return base64;
+  }
+
   const yoga = createYoga({
     schema: createSchema({
       typeDefs: /* GraphQL */ `
@@ -30,7 +35,8 @@ export default function startServer() {
       `,
       resolvers: {
         Query: {
-          files: () => readdir(FILES_DIR).then(files => files.map(filename => ({ filename }))),
+          files: () =>
+            readdir(FILES_DIR).then(files => files.map(filename => ({ filename, base64: getBase64(filename) }))),
         },
         Mutation: {
           uploadFile: async (_, { upload }) => {
@@ -42,7 +48,7 @@ export default function startServer() {
             } catch (e) {
               console.error(`Error writing ${filename}`, e);
             }
-            return { filename };
+            return { filename, base64: getBase64(filename) };
           },
           deleteFile: async (_, { filename }) => {
             await unlink(join(FILES_DIR, filename));
@@ -50,7 +56,7 @@ export default function startServer() {
           },
         },
         File: {
-          base64: ({ filename }) => readFile(join(FILES_DIR, filename), 'base64'),
+          base64: ({ filename }) => getBase64(filename),
         },
       },
     }),
