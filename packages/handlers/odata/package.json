@@ -38,7 +38,7 @@
     "@graphql-mesh/types": "0.89.3",
     "@graphql-mesh/utils": "0.43.4",
     "@graphql-tools/delegate": "9.0.21",
-    "@graphql-tools/utils": "9.1.3",
+    "@graphql-tools/utils": "9.1.4-alpha-20230111164002-30864906",
     "@whatwg-node/fetch": "^0.6.0",
     "dataloader": "2.1.0",
     "fast-xml-parser": "4.0.13",
